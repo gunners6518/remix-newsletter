@@ -1,6 +1,7 @@
-import { ActionFunction, Form, useActionData } from "remix";
+import { ActionFunction, Form, useActionData, useTransition } from "remix";
 
 export let action: ActionFunction = async ({ request }) => {
+  await new Promise((res) => setTimeout(res, 2000));
   let formData = await request.formData();
   let email = formData.get("email");
 
@@ -21,7 +22,10 @@ export let action: ActionFunction = async ({ request }) => {
 
 export default function Newsletter() {
   let actionData = useActionData();
-  let state: "succsess" | "idel" | "error" = actionData?.subscription
+  let transition = useTransition();
+  let state: "succsess" | "idel" | "error" | "submitting" = transition
+    ? "submitting"
+    : actionData?.subscription
     ? "succsess"
     : actionData?.error
     ? "error"
@@ -29,12 +33,16 @@ export default function Newsletter() {
 
   return (
     <main>
-      <Form reloadDocument method="post" aria-hidden={state === "succsess"}>
+      <Form method="post" aria-hidden={state === "succsess"}>
         <h2>Subscribe!!</h2>
         <p>Don`t miss any action!</p>
-        <fieldset>
+        {/* submit中はdisabledにする */}
+        <fieldset disabled={state === "submitting"}>
           <input type="email" placeholder="you@example.com" />
-          <button type="submit"></button>
+          <button type="submit">
+            {/* 文言もstateに応じて変える */}
+            {state === "submitting" ? "submitting" : "subscribe"}
+          </button>
         </fieldset>
 
         <p>{actionData?.error ? actionData.message : <>&nbsp;</>}</p>
