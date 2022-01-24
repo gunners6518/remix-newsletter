@@ -29,7 +29,7 @@ export default function Newsletter() {
 
   return (
     <main>
-      <Form method="post" aria-hidden={state === "succsess"}>
+      <Form reloadDocument method="post" aria-hidden={state === "succsess"}>
         <h2>Subscribe!!</h2>
         <p>Don`t miss any action!</p>
         <fieldset>
